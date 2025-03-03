@@ -8,10 +8,8 @@ class MediaLibraryPage extends StatefulWidget {
 }
 
 class _MediaLibraryPageState extends State<MediaLibraryPage> {
-  bool pausePressed = true;
-  bool pausePressed1 = true;
-  bool pausePressed2 = true;
-  bool pausePressed3 = true;
+  // Состояние для избранного для каждого трека
+  List<bool> isFavouriteList = [];
 
   final List<String> savedPlaylists = [
     'Плейлист 1',
@@ -30,6 +28,13 @@ class _MediaLibraryPageState extends State<MediaLibraryPage> {
     'Альбом 2',
     'Альбом 3',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    // Инициализация списка состояний "избранного" (по умолчанию все треки не избранные)
+    isFavouriteList = List.generate(favoriteTracks.length, (index) => false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +104,9 @@ class _MediaLibraryPageState extends State<MediaLibraryPage> {
               ),
             ),
             Column(
-              children: favoriteTracks.map((track) {
+              children: favoriteTracks.asMap().entries.map((entry) {
+                final index = entry.key;
+                final track = entry.value;
                 return ListTile(
                   leading: const Icon(Icons.music_note, color: Colors.white),
                   title: Text(
@@ -108,12 +115,15 @@ class _MediaLibraryPageState extends State<MediaLibraryPage> {
                   ),
                   trailing: IconButton(
                     icon: Icon(
-                      pausePressed1 ? Icons.play_arrow : Icons.pause,
+                      isFavouriteList[index] ? Icons.favorite : Icons.favorite_border,
                       color: Colors.white,
                       size: 24,
                     ),
-                    onPressed: () =>
-                        setState(() => pausePressed1 = !pausePressed1),
+                    onPressed: () {
+                      setState(() {
+                        isFavouriteList[index] = !isFavouriteList[index];
+                      });
+                    },
                   ),
                 );
               }).toList(),
@@ -164,67 +174,6 @@ class _MediaLibraryPageState extends State<MediaLibraryPage> {
                     ),
                   );
                 }).toList(),
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.all(16),
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(100, 0, 0, 0),
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 44, 44, 44),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(Icons.music_note, color: Colors.white),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Название трека',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        ),
-                        const Text(
-                          'Исполнитель',
-                          style: TextStyle(color: Colors.grey, fontSize: 14),
-                        ),
-                        const SizedBox(height: 5),
-                        LinearProgressIndicator(
-                          value: 0.5,
-                          backgroundColor: Colors.grey[800],
-                          color: Colors.white,
-                        ),
-                      ],
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.skip_previous, color: Colors.white),
-                    onPressed: () {},
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      pausePressed ? Icons.play_arrow : Icons.pause,
-                      color: Colors.white,
-                      size: 40,
-                    ),
-                    onPressed: () =>
-                        setState(() => pausePressed = !pausePressed),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.skip_next, color: Colors.white),
-                    onPressed: () {},
-                  ),
-                ],
               ),
             ),
           ],

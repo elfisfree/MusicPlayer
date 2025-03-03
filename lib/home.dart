@@ -27,17 +27,84 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _widgetOptions[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Дом'),
-          BottomNavigationBarItem(icon: Icon(Icons.library_music), label: 'Моя медиатека'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Профиль'),
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Контейнер с элементами управления музыкой
+          Container(
+            margin: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(100, 0, 0, 0),
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 44, 44, 44),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.music_note, color: Colors.white),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Название трека',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
+                      const Text(
+                        'Исполнитель',
+                        style: TextStyle(color: Colors.grey, fontSize: 14),
+                      ),
+                      const SizedBox(height: 5),
+                      LinearProgressIndicator(
+                        value: 0.5,
+                        backgroundColor: Colors.grey[800],
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.skip_previous, color: Colors.white),
+                  onPressed: () {},
+                ),
+                IconButton(
+                  icon: Icon(
+                    pausePressed ? Icons.play_arrow : Icons.pause,
+                    color: Colors.white,
+                    size: 40,
+                  ),
+                  onPressed: () => setState(() => pausePressed = !pausePressed),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.skip_next, color: Colors.white),
+                  onPressed: () {},
+                ),
+              ],
+            ),
+          ),
+          // Сам BottomNavigationBar
+          BottomNavigationBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            items: const [
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Дом'),
+              BottomNavigationBarItem(icon: Icon(Icons.library_music), label: 'Моя медиатека'),
+              BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Профиль'),
+            ],
+            currentIndex: _selectedIndex,
+            selectedItemColor: Colors.white,
+            onTap: _onItemTapped,
+          ),
         ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.white,
-        onTap: _onItemTapped,
       ),
     );
   }
@@ -230,66 +297,6 @@ class _HomeContentState extends State<HomeContent> {
                 ),
               ],
             ),
-          ),
-        ),
-        Container(
-          margin: const EdgeInsets.all(16),
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: const Color.fromARGB(100, 0, 0, 0),
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 44, 44, 44),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(Icons.music_note, color: Colors.white),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Название трека',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                    const Text(
-                      'Исполнитель',
-                      style: TextStyle(color: Colors.grey, fontSize: 14),
-                    ),
-                    const SizedBox(height: 5),
-                    LinearProgressIndicator(
-                      value: 0.5,
-                      backgroundColor: Colors.grey[800],
-                      color: Colors.white,
-                    ),
-                  ],
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.skip_previous, color: Colors.white),
-                onPressed: () {},
-              ),
-              IconButton(
-                icon: Icon(
-                  pausePressed ? Icons.play_arrow : Icons.pause,
-                  color: Colors.white,
-                  size: 40,
-                ),
-                onPressed: () => setState(() => pausePressed = !pausePressed),
-              ),
-              IconButton(
-                icon: const Icon(Icons.skip_next, color: Colors.white),
-                onPressed: () {},
-              ),
-            ],
           ),
         ),
       ],

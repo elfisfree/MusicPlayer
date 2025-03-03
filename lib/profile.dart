@@ -23,16 +23,27 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
     isFavouriteList = List.generate(favoriteTracks.length, (index) => true);
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Профиль"),
+        automaticallyImplyLeading: false, // Убирает кнопку "Назад"
         actions: [
+          // Кнопка редактирования
           IconButton(
             icon: const Icon(Icons.edit),
+            color: const Color.fromARGB(180, 255, 255, 255),
             onPressed: () {
               _editProfile();
+            },
+          ),
+          // Кнопка выхода
+          IconButton(
+            icon: const Icon(Icons.exit_to_app_outlined),
+            color: const Color.fromARGB(180, 255, 255, 255),
+            onPressed: () {
+              Navigator.popAndPushNamed(context, '/');
             },
           ),
         ],
@@ -98,9 +109,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   title: Text(favoriteTracks[index]),
                   trailing: IconButton(
                     icon: Icon(
-                      Icons.favorite,
-                      color: isFavouriteList[index] ? Colors.white : const Color.fromARGB(100, 0, 0, 0),
-                      size: 28,
+                      isFavouriteList[index]
+                          ? Icons.favorite
+                          : Icons.favorite_border,
+                      color: Colors.white,
+                      size: 24,
                     ),
                     onPressed: () {
                       setState(() {
@@ -110,30 +123,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 );
               },
-            ),
-            Container(
-              width: 70,
-              margin: const EdgeInsets.all(16),
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(100, 0, 0, 0),
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: IconButton(
-                icon: const Icon(
-                  Icons.exit_to_app_outlined,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  Navigator.popAndPushNamed(context, '/');
-                },
-              ),
-            ),
+            ),            
           ],
         ),
       ),
     );
   }
+
   void _editProfile() {}
   void _shareProfile() {}
   void _removeFromFavorites(int index) {
@@ -141,6 +137,5 @@ class _ProfilePageState extends State<ProfilePage> {
       favoriteTracks.removeAt(index);
       isFavouriteList.removeAt(index);
     });
-    print("Трек удален из избранного");
   }
 }
