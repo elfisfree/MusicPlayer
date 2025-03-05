@@ -1,11 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:music_player/database/auth.dart';
 
 class RecoveryPage extends StatelessWidget {
   const RecoveryPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController emailController = TextEditingController();
+    AuthService authService = AuthService();
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -26,6 +29,7 @@ class RecoveryPage extends StatelessWidget {
               child: Column(
                 children: [
                   TextField(
+                    controller: emailController,
                     cursorColor: Colors.white,
                     style: TextStyle(color: Colors.white),
                     decoration: InputDecoration(
@@ -34,7 +38,14 @@ class RecoveryPage extends StatelessWidget {
                         color: Colors.white,
                       ),
                       suffixIcon: IconButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          if (emailController.text.isEmpty) {
+                            print("Поле пустое");
+                          } else {
+                            await authService.recoveryPassword(emailController.text);
+                            emailController.clear();
+                          }
+                        },
                         icon: Icon(Icons.send),
                         color: Colors.white,
                       ),
@@ -50,9 +61,9 @@ class RecoveryPage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 10),
-                  Text(
+                  Text(                   
                     "Для восстановления доступа к своему аккаунту, пожалуйста, введите свою почту",
-                    textAlign: TextAlign.center,
+                    textAlign: TextAlign.left,
                     style: TextStyle(
                       color: Color(0xFFC0C0C0),
                     ),

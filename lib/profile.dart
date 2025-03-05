@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:music_player/database/auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -8,7 +11,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final String userName = "Иван Иванов";
+  String userEmail = "Загрузка...";
   final String userBio = "Любитель музыки и путешествий";
   final String userAvatar = "images/avatar.png";
   final List<String> favoriteTracks = [
@@ -17,20 +20,42 @@ class _ProfilePageState extends State<ProfilePage> {
     "Трек 3 - Исполнитель 3",
   ];
   List<bool> isFavouriteList = [];
+  AuthService authService = AuthService();
+  final SupabaseClient supabase = Supabase.instance.client;
 
   @override
   void initState() {
     super.initState();
     isFavouriteList = List.generate(favoriteTracks.length, (index) => true);
+    _fetchUserEmail(); // Загружаем email пользователя
+  }
+
+  Future<void> _fetchUserEmail() async {
+    try {
+      // Получаем текущего пользователя
+      final user = supabase.auth.currentUser;
+      if (user == null) {
+        throw Exception("Пользователь не авторизован");
+      }
+
+      // Обновляем состояние с email пользователя
+      setState(() {
+        userEmail = user.email ?? "Email не указан";
+      });
+    } catch (e) {
+      setState(() {
+        userEmail = "Ошибка загрузки email";
+      });
+      print("Ошибка при загрузке email: $e");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false, // Убирает кнопку "Назад"
+        automaticallyImplyLeading: false,
         actions: [
-          // Кнопка редактирования
           IconButton(
             icon: const Icon(Icons.edit),
             color: const Color.fromARGB(180, 255, 255, 255),
@@ -42,8 +67,11 @@ class _ProfilePageState extends State<ProfilePage> {
           IconButton(
             icon: const Icon(Icons.exit_to_app_outlined),
             color: const Color.fromARGB(180, 255, 255, 255),
-            onPressed: () {
-              Navigator.popAndPushNamed(context, '/');
+            onPressed: () async {
+              await authService.logOut();
+              final prefs = await SharedPreferences.getInstance();
+              await prefs.setBool('isLoggedIn', false);
+              Navigator.popAndPushNamed(context, '/auth');
             },
           ),
         ],
@@ -61,7 +89,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    userName,
+                    userEmail,
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -123,7 +151,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 );
               },
-            ),            
+            ),
           ],
         ),
       ),
@@ -133,6 +161,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void _editProfile() {}
   void _shareProfile() {}
   void _removeFromFavorites(int index) {
+    // ignore: unused_element
     setState(() {
       favoriteTracks.removeAt(index);
       isFavouriteList.removeAt(index);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:music_player/auth.dart';
 import 'package:music_player/home.dart';
+import 'package:music_player/landing.dart';
 import 'package:music_player/medialibrary.dart';
 import 'package:music_player/profile.dart';
 import 'package:music_player/recovery_pass.dart';
@@ -48,7 +49,8 @@ class AppTheme extends StatelessWidget {
       ),
       initialRoute: "/",
       routes: {
-        '/': (context) => AuthPage(),
+        '/': (context) => LandingPage(),
+        '/auth': (context) => AuthPage(),
         '/reg': (context) => RegPage(),
         '/recovery': (context) => RecoveryPage(),
         '/home': (context) => HomePage(),
